@@ -101,3 +101,19 @@ db.employees.find({department:{$exists:false}})
 
 //update the employee whose email is sai@gmail.com to update the salary to 6000
 db.employees.updateOne({email:'sai@gmail.com'},{$set:{salary:6000}})
+
+
+//In this $in operator is used to find the employees whose department is either CSE or ECE and displays the cse and ece employees
+db.employees.find({department:{$in:['CSE','ECE']}})
+
+//in this $push operator is used to add the score of 5 to the employee whose email is sai@gmail.com
+db.employees.updateOne({email:'sai@gmail.com'},{$push:{score:5}})
+
+//if we want to add multiple values to the score array of the employee whose email is sai@gmail.com
+db.employees.updateOne({email:'sai@gmail.com'},{$push:{score:{$each:[5,6,7]}}})
+
+//in this $pull operator is used to remove the score of 5 from the employee whose email is sai@gmail.com
+db.employees.updateOne({email:'sai@gmail.com'},{$pull:{score:5}})   
+
+//to remove the score 1 from the employee
+db.employeees.find({},{$pop:{score:1}})
