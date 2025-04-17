@@ -57,3 +57,10 @@ db.employees.insertOne({
     skills: ["Java","Python"],
     date: Date()
 })
+
+//to sort according to the salary and display the name and salary
+db.employees.find({},{_id:0,name:true,salary:true}).sort({salary:1})
+
+
+//to display the employee whose city is medchal
+db.employees.find({'address.city':'Medchal'})

@@ -1,6 +1,11 @@
+//starting step after opening cmd 
 type mongosh in command prompt 
-show dbs;
+
+// and than click the below command
 use mydb;
-show collections;
+
+//for creating of tables
 db.createCollections("products")
+
+//for showing the tables
 show collections;
