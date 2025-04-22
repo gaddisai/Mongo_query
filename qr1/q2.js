@@ -117,3 +117,34 @@ db.employees.updateOne({email:'sai@gmail.com'},{$pull:{score:5}})
 
 //to remove the score 1 from the employee
 db.employeees.find({},{$pop:{score:1}})
+
+//Insert data into posts collection
+db.posts.insertOne({title:"Ths is a title",desc:"Sample desc",author:{name:"Cathy",email:"cathy@gmail.com"},})
+
+//to display the title desc and author name of the cathy@gmail.com
+db.posts.find({"author.email":"cathy@gmail.com"},{_id:0,"author.name":1,title:1,desc:1})
+
+
+//schema validation
+//db.createCollection("customers",{validator:{}})
+db.createCollection("customers",{
+    validator:{ 
+        $jsonSchema:{
+        bsonType:"object",
+        required:["name","email"],
+        properties:{
+            name:{
+                bsonType:"string",
+                description:"must be a string and is required"
+            },
+            email:{
+                bsonType:"string",
+                pattern:"@gmail.com",
+                description:"must be a string and is required"
+            }
+        }
+    }
+}})
+//fields or insert statmemts are restricted means name and email should be only strings not any other data type....
+//in the above validator we are creating a collection called customers and we are validating the name and email fields in the collection and we are also giving the pattern to the email field that it should be @gmail.com
+//and we are also giving the description to the name and email fields that it should be a string and is required... so if we give name as 22 it wil show an error so only the string types only can be written in the name and email fields
