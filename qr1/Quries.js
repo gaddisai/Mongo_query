@@ -148,3 +148,30 @@ db.createCollection("customers",{
 //fields or insert statmemts are restricted means name and email should be only strings not any other data type....
 //in the above validator we are creating a collection called customers and we are validating the name and email fields in the collection and we are also giving the pattern to the email field that it should be @gmail.com
 //and we are also giving the description to the name and email fields that it should be a string and is required... so if we give name as 22 it wil show an error so only the string types only can be written in the name and email fields
+
+
+//This is the query to find the employees whose email is sai@gmail.com and gives the detailed performance metrics analyze how mongodb executes it
+db.employees.find({email:"sai@gmail.com"}).explain("executionStats");
+
+
+//for creating of index for email 
+db.employees.createIndex({email:1})
+db.employees.createIndex({name:1})
+
+
+// so after indexing we get the documents searched and keys searched only once by using keys and gives one as:"docsexamined:1"... before it checks all the documents 
+
+
+//it shows like below after clicking the command getIndexes
+mydb> db.employees.getIndexes()
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { email: 1 }, name: 'email_1' },
+  { v: 2, key: { name: 1 }, name: 'name_1' }
+]
+
+//for deleting of indexes we use dropIndex
+db.employees.dropIndex("name_1")
+//or we can use anything i have got the answer for both the commands 
+db.employees.dropIndex({name:1})
+
