@@ -244,3 +244,35 @@ db.employees.find({name:{$regex:"v"}},{_id:0,name:1,salary:1})
 
 //$regex:"t$" means it finds the name which ends with "t" and $options:"i" means it is case insensitive so it finds the name which ends with "t" and also "T"
 db.employees.find({name:{$regex:"t$",$options:"i"}},{_id:0,name:1,salary:1})
+
+
+// 
+db.posts.aggregate([{$lookup:{from:"authors",localField:"authorId",foreignField:"_id",as:"authors"}},{$project:{id:0,name:1}}])
+
+
+
+db.authors.aggregate([{$lookup:{from:"posts",localField:"postId",foreignField:"_id",as:"post"}},{$project:{_id:1,name:1,email:1,"author.name":1}}])
+
+
+
+//here it shows the authors name and email and than first post and next another author name and email and post so now we have to doucments because we are using $unwind
+db.authors.aggregate([{ $lookup: { from: "posts", localField: "_id", foreignField: "authorId", as: "post" } },{$unwind:"$post"}])
+
+
+
+//In this to get the document whose title name is "this is title 3"
+db.authors.aggregate([{$lookup:{from:"posts",let:{authorId:"$_id"},pipeline:[{$match:{$expr:{$eq:["$authorId","$$authorId"]}}},{$match:{$expr:{$eq:["$title","This is title 3"]}}}],as:"post"}},{$unwind:"$post"}])
+
+
+db.marks.aggregate([{$lookup:{from:"Subjects",localField:"subjectId",foreignField:"_id",as:"subjects"}},{$lookup:{from:"students",localField:"studentId",foreignField:"_id",as:"students"}}])
+
+
+db.marks.aggregate([{$lookup:{from:"Subjects",localField:"subjectId",foreignField:"_id",as:"subjects"}},{$unwind:"$subjects"},{$lookup:{from:"students",localField:"studentId",foreignField:"_id",as:"students"}},{$unwind:"$students"},{$project:{_id:0,"students.studentName":1,"subjects.subjectName":1,score:1}}])
+
+
+//views
+db.createView("empViewss","employees",[{$match:{email:"sai@gmail.com"}}])
+
+
+//it shows the employee which conatins the email as "sai@gmail.com"
+db.empViewss.find()
