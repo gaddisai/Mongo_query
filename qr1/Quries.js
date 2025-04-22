@@ -170,8 +170,43 @@ mydb> db.employees.getIndexes()
   { v: 2, key: { name: 1 }, name: 'name_1' }
 ]
 
+
 //for deleting of indexes we use dropIndex
 db.employees.dropIndex("name_1")
 //or we can use anything i have got the answer for both the commands 
 db.employees.dropIndex({name:1})
 
+
+//Aggregation framework..............................................................................................
+
+//here $match works like where condition it finds the employee whose department is "IT"
+db.employees.aggregate([
+    {$match:{department:"IT"}}
+
+])
+
+//so here $project works like where it shows only the name and salary of the whose employee department is "IT" and it does not shows id
+db.employees.aggregate([{$match:{department:"IT"}},{$project:{_id:0,name:1,salary:1}}])
+
+
+//we get the all the employee details with name and salary only by using $project....
+db.employees.aggregate([{$project:{_id:0,name:1,salary:1}}])
+
+
+//here we are using $addFields to add bonus field and we are using $multiply to multiply salary with 2 and add it to bonus
+db.employees.aggregate([{$addFields:{Bonus:{$multiply:["$salary",2]}}}])
+
+
+
+//here it first match where the department is "IT" and add the field bonus and displyas the name,salary,bonus..... 
+db.employees.aggregate([{$match:{department:"IT"}},{$addFields:{Bonus:{$multiply:["$salary",2]}}},{$project:{_id:0,name:1,salary:1,Bonus:1}}])
+
+
+
+//display the employeee name,salary,bonus,grade and condition is if salary is greater than or equal to 5000 than grade a or else grade b... and we have written this
+//using ternary operator we can write using if else also....
+db.employees.aggregate([{$project:{_id:0,name:1,salary:1,Bonus:1,Grade:{$cond:[{$gte:["$salary",5000]},"Grade A","Grade B"]},}}])
+
+//in this we are using $switch and branches and than cases so that we can write many conditions at at time and should write default as unknown or something if it does
+//not matches any cases......
+db.employees.aggregate([{$project:{_id:0,name:1,salary:1,Bonus:1,Grade:{$switch:{branches:[{case:{$gte:['$salary',5500]},then: "Grade A"},{case:{$lt:['$salary',5500]},then:"Grade B"}],default:"Unknown"},},}}])
