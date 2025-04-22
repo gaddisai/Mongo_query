@@ -55,13 +55,13 @@ db.Users.deleteOne({name:"test2"})
 
 //
 db.employees.insertOne({
-    name:"deepesh",
-    email: 'deepesh@gmail.com',
-    address: {city:'Kammam',state:'Telangana'},
-    department: 'ECE',
-    salary: 7000,
-    score:[6,4],
-    skills: ["Java","Python"],
+    name:"saikrishna",
+    email: 'sai@gmail.com',
+    address: {city:'medchal',state:'hyderabad'},
+    department: 'IT',
+    salary: 5500,
+    score:[3,4,1],
+    skills: ["Java","Python","React Js","Bootstrap"],
     date: Date()
 })
 
@@ -210,3 +210,28 @@ db.employees.aggregate([{$project:{_id:0,name:1,salary:1,Bonus:1,Grade:{$cond:[{
 //in this we are using $switch and branches and than cases so that we can write many conditions at at time and should write default as unknown or something if it does
 //not matches any cases......
 db.employees.aggregate([{$project:{_id:0,name:1,salary:1,Bonus:1,Grade:{$switch:{branches:[{case:{$gte:['$salary',5500]},then: "Grade A"},{case:{$lt:['$salary',5500]},then:"Grade B"}],default:"Unknown"},},}}])
+
+
+// to display the employye name,salary,bonus and department full form if department is IT then Information Technology, if department is CSE then Computer Science and Engineering and if department is ECE then Electricals and communication engineering
+// and if it does not matches any of these then it should show unknown....
+db.employees.aggregate([{$project:{_id:0,name:1,salary:1,Bonus:1,dept:{$switch:{branches:[{case:{$eq:['$department','IT']},then:'Information Technologgy'},{case:{$eq:['$department','CSE']},then:'Computer Science and Engineering'},{case:{$eq:['$department','ECE']},then:'Electricals and communication engineering'}],default:'Unknown'},},}}])
+
+
+
+//It shows the name,salary by sorting accordingto the name and skips the first name and prints the second name because limit is 1
+db.employees.aggregate([{$project:{_id:0,name:1,salary:1}},{$sort:{name:1}},{$skip:1},{$limit:1}])
+
+
+
+
+//here we use $unwind to get the sills items in the array and it shows the name and skills of the employee and it shows the skills in different rows
+db.employees.aggregate([{$project:{_id:0,name:1,skills:1}},{$unwind:"$skills"}])
+
+
+
+
+//here we are creating a new field salaryStr and we are converting salary to int here we are using $convert and $input....
+db.employees.aggregate([{$project:{_id:0,name:1,salaryStr:{$convert:{$input:"$salary",to:"int"}}}}])
+
+
+db.employees.aggregate([{$project:{_id:0,name:1,salaryStr:{$convert:{$input:"$salary",to:"int"}}}},{$group:{_id:"$department",total:{$sum:"$salary"}}}])
