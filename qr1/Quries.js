@@ -229,9 +229,18 @@ db.employees.aggregate([{$project:{_id:0,name:1,skills:1}},{$unwind:"$skills"}])
 
 
 
-
 //here we are creating a new field salaryStr and we are converting salary to int here we are using $convert and $input....
 db.employees.aggregate([{$project:{_id:0,name:1,salaryStr:{$convert:{$input:"$salary",to:"int"}}}}])
 
 
 db.employees.aggregate([{$project:{_id:0,name:1,salaryStr:{$convert:{$input:"$salary",to:"int"}}}},{$group:{_id:"$department",total:{$sum:"$salary"}}}])
+
+
+
+//regular expression::
+//so heere we are using $regex where it works like when we give the starting letter of the name than it finds displays the name which starts from "v"
+db.employees.find({name:{$regex:"v"}},{_id:0,name:1,salary:1})
+
+
+//$regex:"t$" means it finds the name which ends with "t" and $options:"i" means it is case insensitive so it finds the name which ends with "t" and also "T"
+db.employees.find({name:{$regex:"t$",$options:"i"}},{_id:0,name:1,salary:1})
