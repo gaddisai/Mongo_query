@@ -322,3 +322,45 @@ start mongod -replSet rs1 -logpath d:\mongo-replica\data2\2.log --dbpath d:\mong
 
 start mongod -replSet rs1 -logpath d:\mongo-replica\data3\3.log --dbpath d:\mongo-replica\data3\ --port 27020
 
+///
+mongosh --port 27018
+
+config={_id:"rs1",members:[{_id:0,host:"127.0.0.1:27018"},{_id:1,host:"127.0.0.1:27019"},{_id:2,host:"127.0.0.1:27020"}]}
+
+rs.initiate(config)
+
+rs.config()
+
+rs.status()
+
+//
+rs1 [direct: primary] test> show dbs
+admin    80.00 KiB
+config  128.00 KiB
+local   404.00 KiB
+
+rs1 [direct: primary] test> use mytestdb1
+switched to db mytestdb1
+
+rs1 [direct: primary] mytestdb1> show dbs
+admin    80.00 KiB
+config  128.00 KiB
+local   404.00 KiB
+
+// than go to the command prompt and open the second server that is 27019 by clikcing
+mongosh --port 27019
+
+// and now click 
+
+// and it will show the the my testdb1 database in the secondserver
+show dbs
+
+// now insert a document in 27018 by clicking the command 
+
+db.customers.insertOne({name:"Sai"})
+
+//and than automatically 27019 and 27020 will also get the document inserted in them
+
+
+
+
