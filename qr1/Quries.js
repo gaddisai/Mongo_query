@@ -276,3 +276,49 @@ db.createView("empViewss","employees",[{$match:{email:"sai@gmail.com"}}])
 
 //it shows the employee which conatins the email as "sai@gmail.com"
 db.empViewss.find()
+
+
+//authentication....................................................................................
+use admin 
+
+db.createUser({
+    user:"saikrishna",
+    pwd:"saikrishna",
+    roles:[{role:"root",db:"admin"}]
+})
+db.createUser({
+    user:"user1",
+    pwd:"1234",
+    roles:[{role:"read",db:"mydb"}]
+})
+db.createUser({
+    user:"user2",
+    pwd:"1234",
+    roles:[{role:"readWrite",db:"mydb"}]
+})
+
+
+
+
+//methods to direct login to databse in cmd
+
+mongosh -username saikrishna -password saikrishna
+
+mongosh -username saikrishna --authenticationDatabase admin
+
+
+mongodump -d mydb -o d:\backup
+
+db.dropDatabase("mydb")
+
+mongorestore -d mydb d:\backup\mydb
+
+///
+create a folder in d drive that named as mongo-replica and in that create 3 folders data1,data2,data3
+
+start mongod -replSet rs1 -logpath d:\mongo-replica\data1\1.log --dbpath d:\mongo-replica\data1\ --port 27018
+
+start mongod -replSet rs1 -logpath d:\mongo-replica\data2\2.log --dbpath d:\mongo-replica\data2\ --port 27019
+
+start mongod -replSet rs1 -logpath d:\mongo-replica\data3\3.log --dbpath d:\mongo-replica\data3\ --port 27020
+
