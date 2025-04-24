@@ -361,6 +361,8 @@ db.customers.insertOne({name:"Sai"})
 
 //and than automatically 27019 and 27020 will also get the document inserted in them
 
+db.shutdownServer()
+
 
 
 
