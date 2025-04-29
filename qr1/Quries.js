@@ -363,6 +363,85 @@ db.customers.insertOne({name:"Sai"})
 
 db.shutdownServer()
 
+// SHARDING::
+//Sharding in MongoDB is a method of a HORIZONTAL SCALING, where large collections are split 
+// across multiple servers (called shards) to handle more data and higher traffic
+
+//example:
+// You are hosting a huge birthday party
+// You have 1000 candies  to give to all your friends.
+// If you try to carry and give out all the candies by yourself, it will be very slow and tiring.
+// Solution:
+// You call your cousins to help you! Each cousin handles some of the candies.
+
+
+// Now,create a folder in d drive named as dbshards and add 6 folders into it naming as shard1,shard2,shard3,shard4,shard5,shard6
+
+//after creating the folders open the command prompt and type the below commands in separate tabs
+//now run this command and it will show some data ignore it that means let that tab be open
+//  this will happen for all the commands like below commands
+1. mongod --configsvr --port 27018 --replSet cf --dbpath d:\dbshards\conf
+//now again open new tab
+mongod --configsvr --port 27019 --replSet cf --dbpath d:\dbshards\rconf
+//now again open new tab
+Open new tab and Initiate replica set for config servers
+// and type this command
+mongosh --port 27018
+// and type this command 
+rs.initiate({_id:'cf',members:[{_id:0,host:'localhost:27018'},{_id:1,host:'localhost:27019'}]})
+// and next type
+rs.status()
+
+// now same for this commands also 
+Start Shard1 servers on separate tabs of command promp
+//new cmd
+1. mongod --shardsvr --port 27020 --replSet rs1 --dbpath d:\dbshards\s1
+//new cmd
+2. mongod --shardsvr --port 27021 --replSet rs1 --dbpath d:\dbshards\s1r
+Open new tab and Initiate replica set for shard1 servers
+//open new cmd
+mongosh --port 27020
+//type below command
+rs.initiate({_id:'rs1',members:[{_id:0,host:'localhost:27020'},{_id:1,host:'localhost:27021'}]})
+//type this command
+rs.staus()
+
+
+// now same for this commands also 
+Start Shard2 servers on separate tabs of command prompt
+//new cmd
+mongod --shardsvr --port 27022 --replSet rs2 --dbpath d:\dbshards\s2
+//new cmd
+mongod --shardsvr --port 27023 --replSet rs2 --dbpath d:\dbshards\s2r
+Open new tab and Initiate replica set for shard2 servers
+//open new cmd
+
+mongosh --port 27022
+//type below command
+rs.initiate({_id:'rs2',members:[{_id:0,host:'localhost:27022'},{_id:1,host:'localhost:27023'}]})
+//type this command
+rs.staus()
+
+//now do the same this for this codes alsoo
+//open new comd prompt and type this command
+mongos  --configdb cf/localhost:27018,localhost:27019 --port 27050
+
+Now connect to 27050 and add shards
+//open new cmd prompt and type this command
+mongosh --port 27050
+//and type this command
+sh.addShard("rs1/localhost:27020,localhost:27021")
+//and type this command
+sh.addShard("rs2/localhost:27022,localhost:27023")
+//and type this command
+sh.status()
+//now after typing sh.status() we will see the ee addshards content
+
+
+
+
+
+
 
 
 
