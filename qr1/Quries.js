@@ -438,7 +438,45 @@ sh.status()
 //now after typing sh.status() we will see the ee addshards content
 
 
+//TRANSACTIONS IN MONGODB
+//first create a folder in d drvie and name it as mongo-replica1 and in that create three folders name them as data1,data2,data3
+//open new cmd
+mongod -replSet rs1 -logpath d:\mongo-replica\data1\1.log --dbpath d:\mongo-replica\data1\ --port 27018
+//after typing the above command it will show the blank window and cursor will go to the next line so now u have to open new cmd and type the next command
+//open new cmd
+mongod -replSet rs1 -logpath d:\mongo-replica\data2\2.log --dbpath d:\mongo-replica\data2\ --port 27019
+//after typing the above command it will show the blank window and cursor will go to the next line so now u have to open new cmd and type the next command
+//open new cmd
+mongod -replSet rs1 -logpath d:\mongo-replica\data3\3.log --dbpath d:\mongo-replica\data3\ --port 27020
+//after typing the above command it will show the blank window and cursor will go to the next line so now u have to open new cmd and type the next command
 
+
+
+//again open new cmd
+mongosh --port 27018
+//type this command
+rs.initiate({_id:"rs1",members:[{_id:0,host:"127.0.0.1:27018"},{_id:1,host:"127.0.0.1:27019"},{_id:2,host:"127.0.0.1:27020"}]})
+//type this command
+rs.config()  //to check the config
+//type this command
+rs.status()
+
+// now go to new cmd
+// and type the below command
+mongosh "mongodb://localhost:27018,localhost:27019,localhost:27020/hdfc?replicaSet=rs1"
+//type the below commands
+db.customers.insertOne({_id:1,name:"Sai",bal:1000})
+db.customers.insertOne({_id:2,name:"Srujana",bal:800})
+//so now the customers db will create now type the below commmands
+const session = db.getMongo().startSession();
+session.startTransaction()
+var custCollection = session.getDatabase("hdfc").customers
+custCollection.updateOne({_id:1},{$inc:{bal:-100}})
+session.commitTransaction() 
+// after typing the commit transation than check the customers db by clicking the below command
+db.customers.find()
+//now you can see that the balance of the customer with id 1 is decreased by 100 and
+//  it is 900 now and the balance of the customer with id 2 is 800 and it is not changed so it will be same
 
 
 
